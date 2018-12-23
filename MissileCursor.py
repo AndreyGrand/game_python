@@ -40,7 +40,7 @@ class MissileCursor:
         return t.get_poly()
 
     def polyPoly(self, t, pl):
-        t.goto(pl[0][0],pl[0][1])
+        t.goto(pl[0][0], pl[0][1])
         t.setheading(270)
         t.begin_poly()
         for dot in pl:
@@ -65,18 +65,11 @@ class MissileCursor:
         temporary.hideturtle()
         temporary.penup()
         missile = turtle.Shape("compound")
-        # body = self.polyRectangle(temporary, 0,-4,20,4)
-        body = ((0,2), (-4,0), (-4,-12), (-8, -16),(-8, -20),(8, -20), (8, -16), (4, -12), (4, 0))
+        body = ((0, 2), (-4, 0), (-4, -12), (-8, -16), (-8, -20), (8, -20), (8, -16), (4, -12), (4, 0))
         missile.addcomponent(body, self.color, 'black')
-        # left_eleron = ((-8,-20),(-4,-20),(-4,-12),(-8,-16))
-        # missile.addcomponent(left_eleron, self.color, 'black')
-        # right_eleron = ((8,-20),(4,-20),(4,-12),(8,-16))
-        # missile.addcomponent(right_eleron, self.color, 'black')
-        # nouse = ((-4,0),(0,8),(4,0))
-        # missile.addcomponent(nouse, self.color, 'black')
-        fire = ((-2,-20),(0,-32),(2,-20))
+        fire = ((-2, -20), (0, -32), (2, -20))
         missile.addcomponent(fire, 'red', 'red')
         name = 'missile_{0}'.format(self.color)
-        turtle.addshape(name, shape = missile)
+        turtle.addshape(name, shape=missile)
         del temporary
         screen.delay(delay)

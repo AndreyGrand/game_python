@@ -4,6 +4,7 @@ import threading
 import turtle
 
 from Base import Base
+from Counter import CounterMissiles
 from DestroyableBase import DestroyableBase
 from Missile import Missile, MISSILE_PATH
 from MissileCursor import MissileCursor
@@ -41,6 +42,8 @@ class Game:
         self.enemy_missiles = []
         self.our_base = []
         self.rocket_base = None
+        self.countOurMissile = CounterMissiles(x= 400, y = 300, caption= 'Выпущено ракет:', color='white')
+        self.countEnemyMissile = CounterMissiles(x= -400, y = 300, caption= 'Атакующих ракет:', color='red')
 
     def create_missile(self, color, x, y, x2, y2):
         return Missile(x=x, y=y, color=color, x2=x2, y2=y2)
@@ -49,6 +52,7 @@ class Game:
         target_position = random.randint(1, len(self.our_base))
         target = self.our_base[target_position - 1]
         self.enemy_missiles.append(self.create_missile('red', x, y, target.x, target.y))
+        self.countEnemyMissile.incCount()
 
     def move_missile(self, missiles):
         for missile in missiles:
@@ -98,14 +102,14 @@ class Game:
             building.draw()
 
     def fire_missile(self, x, y):
-        if (len(self.enemy_missiles) > 2* len(self.our_missiles) and not self.rocket_base.is_dead() ):
+        if (len(self.enemy_missiles)*2 > len(self.our_missiles) and not self.rocket_base.is_dead() ):
             self.our_missiles.append(self.create_missile('white', BASE_X, BASE_Y + 30, x, y))
+            self.countOurMissile.incCount()
 
     def base_set_up(self):
         window.clear()
         window.register_shape(MISSILE_PATH)
         window.bgpic(os.path.join(BASE_PATH, "images", "background.png"))
-        # for build_name, build_prop in BASES.items():
         base = Base(name="base", x=BASE_X, y=BASE_Y, health=1000,
                     window=window, )
         self.rocket_base=base
