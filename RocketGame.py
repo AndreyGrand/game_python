@@ -6,6 +6,7 @@ import turtle
 from Base import Base
 from DestroyableBase import DestroyableBase
 from Missile import Missile, MISSILE_PATH
+from MissileCursor import MissileCursor
 
 BASE_PATH = os.path.dirname(__file__)
 window = turtle.Screen()
@@ -27,6 +28,10 @@ BUILDINGS = {
     "skyscraper": {'x': BASE_X + 200, 'y': BASE_Y, 'health': 500}
 }
 
+mw = MissileCursor('white')
+mr = MissileCursor('red')
+mw.prepareMissile()
+mr.prepareMissile()
 
 class Game:
     global window
@@ -95,7 +100,6 @@ class Game:
     def fire_missile(self, x, y):
         if (len(self.enemy_missiles) > 2* len(self.our_missiles) and not self.rocket_base.is_dead() ):
             self.our_missiles.append(self.create_missile('white', BASE_X, BASE_Y + 30, x, y))
-        # threading.Thread(name='buildings', target=draw_buildings).run()
 
     def base_set_up(self):
         window.clear()
@@ -113,7 +117,7 @@ class Game:
                                             health=build_prop.get('health'), window= window))
 
     def run(self):
-        # window.tracer(n=2)
+        window.tracer(n=2)
         window.onclick(self.fire_missile)
         while True:
             window.update()
@@ -123,17 +127,14 @@ class Game:
 
             self.draw_buildings()
             self.check_impact()
-            # check_enemy()
+
             threading.Thread(name='buildings', target=self.draw_buildings).run()
             threading.Thread(name='fire_enemy', target=self.check_enemy).run()
             threading.Thread(name='check_interceptions', target=self.check_interceptions).run()
 
-            # check_interceptions()
             self.clear_destroyed_buildings()
             threading.Thread(name='our_missiles', target=self.move_missile, args=[self.our_missiles]).run()
             threading.Thread(name='enemy_missiles', target=self.move_missile, args=[self.enemy_missiles]).run()
-            # move_missile(our_missiles)
-            # move_missile(enemy_missiles)
 
             self.clear_dead(self.our_missiles)
             self.clear_dead(self.enemy_missiles)

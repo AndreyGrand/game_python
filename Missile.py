@@ -11,7 +11,8 @@ class Missile:
         self.color = color
 
         pen = turtle.Turtle(visible=False)
-        pen.shape(MISSILE_PATH)
+        missile_conf = 'missile_{0}'.format(color)
+        pen.shape(missile_conf)
 
         pen.speed(0)
         pen.color(color)
@@ -19,7 +20,7 @@ class Missile:
         pen.setpos(x=x, y=y)
         pen.pendown()
         towards = pen.towards(x2, y2)
-        pen.right(90)
+        # pen.right(90)
         pen.setheading(towards)
         pen.showturtle()
         self.pen = pen
@@ -30,7 +31,6 @@ class Missile:
 
     def step(self):
         if self.state == 'launched':
-            self.pen._rotate(10)
             self.pen.forward(4)
 
             if self.pen.distance(x=self.target[0], y=self.target[1]) < 20:
