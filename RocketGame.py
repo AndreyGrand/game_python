@@ -4,7 +4,7 @@ import threading
 import turtle
 
 from Base import Base
-from Counter import CounterMissiles
+from Counter import CounterMissiles, TimeCounter
 from DestroyableBase import DestroyableBase
 from Missile import Missile, MISSILE_PATH
 from MissileCursor import MissileCursor
@@ -24,9 +24,9 @@ BASES = {
 
 BUILDINGS = {
     "house": {'x': BASE_X - 400, 'y': BASE_Y, 'health': 300},
-    "kremlin": {'x': BASE_X - 200, 'y': BASE_Y, 'health': 2000},
-    "nuclear": {'x': BASE_X + 400, 'y': BASE_Y, 'health': 700},
-    "skyscraper": {'x': BASE_X + 200, 'y': BASE_Y, 'health': 500}
+    # "kremlin": {'x': BASE_X - 200, 'y': BASE_Y, 'health': 2000},
+    # "nuclear": {'x': BASE_X + 400, 'y': BASE_Y, 'health': 700},
+    # "skyscraper": {'x': BASE_X + 200, 'y': BASE_Y, 'health': 500}
 }
 
 mw = MissileCursor('white')
@@ -42,8 +42,17 @@ class Game:
         self.enemy_missiles = []
         self.our_base = []
         self.rocket_base = None
-        self.countOurMissile = CounterMissiles(x= 400, y = 300, caption= 'Выпущено ракет:', color='white')
-        self.countEnemyMissile = CounterMissiles(x= -400, y = 300, caption= 'Атакующих ракет:', color='red')
+        self.countOurMissile = None
+        self.countEnemyMissile = None
+        self.timerCounter = None
+        self.timer = threading.Timer(1.0, self.incTime)
+
+    def incTime(self):
+        self.timerCounter.incCount()
+        del self.timer
+        self.timer =  threading.Timer(1.0, self.incTime)
+        if not self.game_over():
+            self.timer.start()
 
     def create_missile(self, color, x, y, x2, y2):
         return Missile(x=x, y=y, color=color, x2=x2, y2=y2)
@@ -108,7 +117,6 @@ class Game:
 
     def base_set_up(self):
         window.clear()
-        window.register_shape(MISSILE_PATH)
         window.bgpic(os.path.join(BASE_PATH, "images", "background.png"))
         base = Base(name="base", x=BASE_X, y=BASE_Y, health=1000,
                     window=window, )
@@ -119,10 +127,14 @@ class Game:
         for build_name, build_prop in BUILDINGS.items():
             self.our_base.append(DestroyableBase(name=build_name, x=build_prop.get('x'), y=build_prop.get('y'),
                                             health=build_prop.get('health'), window= window))
+        self.countOurMissile = CounterMissiles(x= 400, y = 300, caption= 'Выпущено ракет:', color='white')
+        self.countEnemyMissile = CounterMissiles(x= -400, y = 300, caption= 'Атакующих ракет:', color='red')
+        self.timerCounter = TimeCounter(x =-400, y = 0, caption='Время боя', color='yellow')
 
     def run(self):
         window.tracer(n=2)
         window.onclick(self.fire_missile)
+        self.timer.start()
         while True:
             window.update()
 
@@ -131,6 +143,7 @@ class Game:
 
             self.draw_buildings()
             self.check_impact()
+            self.timerCounter.redraw()
 
             threading.Thread(name='buildings', target=self.draw_buildings).run()
             threading.Thread(name='fire_enemy', target=self.check_enemy).run()

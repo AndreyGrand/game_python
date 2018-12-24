@@ -1,3 +1,4 @@
+from threading import Timer
 from turtle import Turtle
 import turtle
 
@@ -46,6 +47,15 @@ screen = turtle.Screen()
 # screen.onkeypress(lambda : turtle.backward(40), "Down")
 #
 # turtle.listen()
+def hello():
+    global t
+    print("hello, world")
+    del t
+    t = Timer(1.0, hello)
+    t.start()
+
+t = Timer(1.0, hello)
+t.start()
 
 turtle.forward(100)
 msl.shape("missile_blue")

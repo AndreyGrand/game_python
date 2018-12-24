@@ -1,5 +1,5 @@
 import turtle
-from threading import Event, Thread
+from threading import Timer
 
 DEF_FONT = ["Arial", 20, "bold"]
 class CounterMissiles:
@@ -24,21 +24,23 @@ class CounterMissiles:
         self.redraw()
 
     def redraw(self):
-        self.title.clear()
-        self.title.write(self.caption, align="center", font=DEF_FONT)
+        if self.count <=1:
+            self.title.clear()
+            self.title.write(self.caption, align="center", font=DEF_FONT)
         self.numbers.clear()
         self.numbers.write(str(self.count), align= "center", font=DEF_FONT)
 
-class TimeCounter(CounterMissiles, Thread):
+class TimeCounter(CounterMissiles):
     def __init__(self, x, y, caption, color):
         CounterMissiles.__init__(self, x=x, y=y, caption = caption, color= color)
-        Thread.__init__(self)
-        self.stopFlag = Event()
+        # self.timer = Timer(0.05, self.incCount)
 
 
-    def stop(self):
-        self.stopFlag.set()
-
-    def run(self):
-        while not self.stopFlag.wait(timeout=1):
-            self.numbers += 1
+    # def start(self):
+    #     self.timer.start()
+    #
+    # def stop(self):
+    #     del self.timer
+    #
+    def incCount(self):
+        self.count +=1
